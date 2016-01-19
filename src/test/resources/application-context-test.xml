@@ -1,0 +1,34 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+    <context:component-scan base-package="ua.pinta.dao" />
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations" value="classpath*:dao_conection.properties"/>
+    </bean>
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="url" value="${test.connection.url}" />
+        <property name="driverClassName" value="${test.connection.driver_class}" />
+    </bean>
+
+    <bean id="entityManagerFactoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="persistenceXmlLocation" value="classpath:persistence-test.xml" />
+        <property name="persistenceUnitName" value="H2Implementation" />
+    </bean>
+    <!--<bean id="entityManager" class="javax.persistence.EntityManager" factory-bean="entityManagerFactoryBean" factory-method="createEntityManager">-->
+    <!--</bean>-->
+
+    <!--<bean id="departmentDao" class="ua.pinta.dao.DepartmentDaoImpl">-->
+        <!--<constructor-arg index="0" ref="entityManager"/>-->
+    <!--</bean>-->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactoryBean"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
